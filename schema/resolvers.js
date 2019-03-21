@@ -50,7 +50,7 @@ const resolvers = {
             return User.create(args.input)
         },
         updateUser: (obj, args, context, info) => {
-            return User.findByIdAndUpdate(args.id, args.input)
+            return User.findByIdAndUpdate(args.user.id, args.input)
         },
         removeUser: (obj, args, context, info) => {
             return User.remove(args.input)
@@ -59,7 +59,7 @@ const resolvers = {
             return Event.create(args.input)
         },
         updateEvent: (obj, args, context, info) => {
-            return Event.findByIdAndUpdate(args.id, args.input)
+            return Event.findByIdAndUpdate(args.input.id, args.input)
         },
         removeEvent: (obj, args, context, info) => {
             return Event.remove(args.input)
