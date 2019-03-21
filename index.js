@@ -1,14 +1,14 @@
-import express from 'express'
-import { ApolloServer } from 'apollo-server-express'
-import { typeDefs } from './schema/typeDefs'
-import { resolvers } from './schema/resolvers'
-// import fs from 'fs'
-import http from 'http'
-// import https from 'https'
-import bodyParser from 'body-parser'
+const express = require('express')
+const { ApolloServer } = require('apollo-server-express')
+const { typeDefs } = require('./schema/typeDefs')
+const { resolvers } = require('./schema/resolvers')
+// const fs = require('fs')
+const http = require('http')
+// const https = require('https')
+const bodyParser = require('body-parser')
 require('dotenv').config()
 
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 mongoose.connect(
     'mongodb://localhost:27017/calend-app', 
     { useNewUrlParser: true }

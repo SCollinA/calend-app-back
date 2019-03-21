@@ -1,7 +1,6 @@
-import { gql, PubSub } from 'apollo-server-express'
+const { gql } = require('apollo-server-express')
 
-
-export const typeDefs = gql`
+const typeDefs = gql`
     scalar Date
     input UserInput {
         id: ID
@@ -50,3 +49,4 @@ export const typeDefs = gql`
     }
 `
 
+module.exports = { typeDefs }

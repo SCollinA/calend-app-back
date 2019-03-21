@@ -1,14 +1,19 @@
-import 
+const 
     mongoose, 
     { 
         Schema,
-    } from 'mongoose'
+    } = require('mongoose')
 
-export const EventSchema = new Schema({
+const EventSchema = new Schema({
     name: String,
     timeStart: Date,
     timeEnd: Date,
     notes: String,
 })
 
-export const Event = mongoose.model('Event', EventSchema)
+const Event = mongoose.model('Event', EventSchema)
+
+module.exports = {
+    Event,
+    EventSchema
+}

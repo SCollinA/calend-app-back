@@ -1,13 +1,13 @@
-import { GraphQLScalarType } from 'graphql'
-import { Kind } from 'graphql/language'
-import bcrypt from 'bcrypt'
+const { GraphQLScalarType } = require('graphql')
+const { Kind } = require('graphql/language')
+// const bcrypt = require('bcrypt')
 require('dotenv').config()
-const pubsub = new PubSub()
+// const pubsub = new PubSub()
 
-import { User } from '../models/Users'
-import { Event } from '../models/Events'
+const { User } = require('../models/Users')
+const { Event } = require('../models/Events')
 
-export const resolvers = {
+const resolvers = {
     Date: new GraphQLScalarType({
         name: 'Date',
         description: 'Date custom scalar type',
@@ -68,3 +68,5 @@ export const resolvers = {
 
     }
 }
+
+module.exports = { resolvers }
