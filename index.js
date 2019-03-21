@@ -1,4 +1,3 @@
-const express = require('express')
 const { ApolloServer } = require('apollo-server-express')
 const { typeDefs } = require('./schema/typeDefs')
 const { resolvers } = require('./schema/resolvers')
@@ -8,8 +7,10 @@ const http = require('http')
 const bodyParser = require('body-parser')
 require('dotenv').config()
 
+const express = require('express')
 const mongoose = require('mongoose')
-const MongoDBStore = require('connect-mongodb-session')
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session)
 mongoose.connect(
     'mongodb://localhost:27017/calend-app', 
     { useNewUrlParser: true }
