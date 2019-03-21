@@ -64,6 +64,39 @@ const resolvers = {
         removeEvent: (obj, args, context, info) => {
             return Event.remove(args.input)
         },
+        addEventToUser: (obj, args, context, info) => {
+            console.log('add event to user', obj, args, context, info)
+            return User.findById(args.userId)
+            .then(user => {
+                console.log('found user to add event to', user)
+                return Event.findById(args.eventId)
+                .then(event => {
+                    console.log('found event to add to user', event)
+                    user.events = [
+                        ...user.events,
+                        event
+                    ]
+                    return user.save()
+                    .then(() => User.findById(user.id))
+                })
+            })
+        },
+        removeEventFromUser: (obj, args, context, info) => {
+            console.log('remove event from user', obj, args, context, info)
+            return User.findById(args.userId)
+            .then(user => {
+                console.log('found user to remove event from', user)
+                return Event.findById(args.eventId)
+                .then(event => {
+                    console.log('found event to remove from user', event)
+                    user.events = user.events.filter(userEvent => 
+                        userEvent.id !== event.id
+                    )
+                    return user.save()
+                    .then(() => User.findById(user.id))
+                })
+            })
+        }
     },
 }
 
