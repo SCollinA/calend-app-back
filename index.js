@@ -1,10 +1,11 @@
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
-import { typeDefs, resolvers } from './schema'
-import fs from 'fs'
+import { typeDefs } from './schema/typeDefs'
+import { resolvers } from './schema/resolvers'
+// import fs from 'fs'
 import http from 'http'
-import https from 'https'
-import bodyparser from 'body-parser'
+// import https from 'https'
+import bodyParser from 'body-parser'
 require('dotenv').config()
 
 import mongoose from 'mongoose'
