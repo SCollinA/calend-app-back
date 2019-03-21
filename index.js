@@ -7,6 +7,16 @@ import https from 'https'
 import bodyparser from 'body-parser'
 require('dotenv').config()
 
+import mongoose from 'mongoose'
+mongoose.connect(
+    'mongodb://localhost:27017/calend-app', 
+    { useNewUrlParser: true }
+)
+const store = new MongoDBStore({
+    uri: 'mongodb://localhost:27017/calend-app',
+    collection: 'sessions'
+})
+
 const configurations = {
     production: { ssl: false, port: 4000, hostname: 'localhost' },
     development: { ssl: false, port: 4000, hostname: 'localhost' }
@@ -32,6 +42,18 @@ const apollo = new ApolloServer({
 ]}})
 
 const app = express()
+app.use(session({
+    secret: 'random123',
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+    },
+    store,
+    resave: false,
+    saveUninitialized: true,
+})) 
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(express.static('build'))
+app.use(bodyParser.json({limit: '50mb'}));
 
 apollo.applyMiddleware({ app })
 
