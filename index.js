@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 require('dotenv').config()
 
 const mongoose = require('mongoose')
+const MongoDBStore = require('connect-mongodb-session')
 mongoose.connect(
     'mongodb://localhost:27017/calend-app', 
     { useNewUrlParser: true }

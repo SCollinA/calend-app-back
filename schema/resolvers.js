@@ -64,9 +64,6 @@ const resolvers = {
             return Event.remove(args)
         },
     },
-    Subscription: {
-
-    }
 }
 
 module.exports = { resolvers }

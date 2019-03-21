@@ -19,8 +19,8 @@ const typeDefs = gql`
         getEvent(input: EventInput): Event
         getUsers(input: UserInput): [User]
         getEvents(input: EventInput): [Event]
-        getAllUsers(): [User]
-        getAllEvents(): [Event]
+        getAllUsers: [User]
+        getAllEvents: [Event]
     }
     type Mutation {
         addUser(input: UserInput): User
@@ -29,9 +29,6 @@ const typeDefs = gql`
         addEvent(input: EventInput): Event
         updateEvent(input: EventInput): Event
         removeEvent(id: ID): Event
-    }
-    type Subscription {
-
     }
     type AuthPayload {
         token: String
