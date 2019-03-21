@@ -43,6 +43,7 @@ const typeDefs = gql`
         name: String
         timeStart: Date
         timeEnd: Date
+        notes: String
     }
 `
 
