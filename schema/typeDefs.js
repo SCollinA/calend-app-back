@@ -5,6 +5,7 @@ const typeDefs = gql`
     input UserInput {
         _id: ID
         name: String
+        pwhash: String
         eventIds: [ID]
     }
     input EventInput {
