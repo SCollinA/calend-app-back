@@ -133,7 +133,10 @@ const resolvers = {
                 const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
                     expiresIn: 60 * 60 * 24 // expires in one day
                 })
-                return { token }
+                return { 
+                    token,
+                    user
+                }
             })
             
         }

@@ -1,7 +1,7 @@
 {
   "name": "calend-app-back",
   "version": "1.0.0",
-  "description": "",
+  "description": "more than just a calendar app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
