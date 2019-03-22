@@ -13,7 +13,10 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 mongoose.connect(
     'mongodb://localhost:27017/calend-app', 
-    { useNewUrlParser: true }
+    { 
+        useNewUrlParser: true,
+        useFindAndModify: false
+    }
 )
 const store = new MongoDBStore({
     uri: 'mongodb://localhost:27017/calend-app',

@@ -56,10 +56,11 @@ const resolvers = {
             return User.create(args.user)
         },
         updateUser: (obj, args, context, info) => {
-            console.log('updating user', args.user)
+            console.log('updating user', args.oldUser, args.newUser)
             // must guarantee updating user id exists
             // or send original user info to find
-            return User.findOneAndUpdate({ _id: args.user._id }, args.user)
+            return User.findOneAndUpdate(args.oldUser, args.newUser)
+            .then(() => User.findOne(args.newUser))
         },
         removeUser: (obj, args, context, info) => {
             console.log('removing user', args.user)
@@ -70,10 +71,11 @@ const resolvers = {
             return Event.create(args.event)
         },
         updateEvent: (obj, args, context, info) => {
-            console.log('updating event', args.event)
+            console.log('updating event', args.oldEvent, args.newEvent)
             // must guarantee updating user id exists
             // or send original user info to find
-            return Event.findOneAndUpdate({ _id: args.event._id }, args.event)
+            return Event.findOneAndUpdate(args.oldEvent, args.newEvent)
+            .then(() => Event.findOne(args.newEvent))
         },
         removeEvent: (obj, args, context, info) => {
             console.log('removing event', args.event)

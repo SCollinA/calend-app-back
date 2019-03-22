@@ -25,10 +25,10 @@ const typeDefs = gql`
     }
     type Mutation {
         addUser(user: UserInput): User
-        updateUser(user: UserInput): User
+        updateUser(oldUser: UserInput, newUser: UserInput): User
         removeUser(user: UserInput): User
         addEvent(event: EventInput): Event
-        updateEvent(event: EventInput): Event
+        updateEvent(oldEvent: EventInput, newEvent: EventInput): Event
         removeEvent(event: EventInput): Event
         addUserToEvent(user: UserInput, event: EventInput): Event
         removeUserFromEvent(user: UserInput, event: EventInput): Event
