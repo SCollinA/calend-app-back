@@ -139,8 +139,9 @@ const resolvers = {
             console.log('logging in user', args.user)
             return User.findOne({ name: args.user.name })
             .then(user => {
+                if (!user) { throw new Error('bad username or password') }
                 const pwMatch = bcrypt.compareSync(args.user.pwhash, user.pwhash)
-                if (!pwMatch) { throw new Error('bad password') }
+                if (!pwMatch) { throw new Error('bad username or password') }
                 console.log('good password')
                 const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
                     expiresIn: 60 * 60 * 24 // expires in one day
