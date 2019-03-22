@@ -70,6 +70,7 @@ const resolvers = {
                     user
                 }
             })
+            .catch(err => new Error('username taken'))
         },
         updateUser: (obj, args, context, info) => {
             checkLoggedIn(context)
