@@ -24,7 +24,7 @@ const typeDefs = gql`
         getAllEvents: [Event]
     }
     type Mutation {
-        addUser(user: UserInput): User
+        addUser(user: UserInput): AuthPayload
         updateUser(oldUser: UserInput, newUser: UserInput): User
         removeUser(user: UserInput): User
         addEvent(event: EventInput): Event
@@ -32,7 +32,7 @@ const typeDefs = gql`
         removeEvent(event: EventInput): Event
         addUserToEvent(user: UserInput, event: EventInput): Event
         removeUserFromEvent(user: UserInput, event: EventInput): Event
-        login(user: UserInput): AuthPayload!
+        login(user: UserInput): AuthPayload
         logout: User
     }
     type AuthPayload {

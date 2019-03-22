@@ -57,7 +57,19 @@ const resolvers = {
     Mutation: {
         addUser: (obj, args, context, info) => {
             console.log('adding new user', args.user)
-            return User.create(args.user)
+            const saltRounds = 10
+            const salt = bcrypt.genSaltSync(saltRounds)
+            const pwhash = bcrypt.hashSync(args.user.pwhash, salt)
+            return User.create({ ...args.user, pwhash })
+            .then(user => {
+                const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
+                    expiresIn: 60 * 60 * 24 // expires in one day
+                })
+                return { 
+                    token,
+                    user
+                }
+            })
         },
         updateUser: (obj, args, context, info) => {
             checkLoggedIn(context)
