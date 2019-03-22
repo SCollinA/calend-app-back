@@ -90,7 +90,7 @@ const resolvers = {
                     if (!(user.eventIds.find(eventId => eventId.equals(event._id)) ||
                     event.userIds.find(userId => userId.equals(user._id)))) {
                         user.eventIds.push(event._id)
-                        event.userIds.push(user._id)
+                        event.guestIds.push(user._id)
                         return user.save()
                         .then(() => event.save())
                         .then(() => User.findById(user._id))
@@ -105,7 +105,7 @@ const resolvers = {
                 return Event.findOne(args.event)
                 .then(event => {
                     user.eventIds = user.eventIds.filter(eventId => !eventId.equals(event._id))
-                    event.userIds = event.userIds.filter(userId => !userId.equals(user._id))
+                    event.guestIds = event.guestIds.filter(userId => !userId.equals(user._id))
                     return user.save()
                     .then(() => event.save())
                     .then(() => User.findById(user.id))

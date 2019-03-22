@@ -7,7 +7,8 @@ const EventSchema = new Schema({
     timeStart: Date,
     timeEnd: Date,
     notes: String,
-    userIds: [ObjectId]
+    hostId: ObjectId,
+    guestIds: [ObjectId]
 })
 
 const Event = mongoose.model('Event', EventSchema)
