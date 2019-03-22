@@ -26,40 +26,68 @@ const resolvers = {
     }),
     Query: {
         getUser: (obj, args, context, info) => {
-            return User.findOne(args.input)
+            console.log('getting user', args.user)
+            return User.findOne(args.user)
         },
-        getEvent: (obj, args, context, info) => {
-            return Event.findOne(args.input)
+        getUserEvent: (obj, args, context, info) => {
+            console.log('getting event for user', args.event, args.user)
+            return User.findOne(args.user)
+            .then(user => {
+                // search the db to find matching event
+                return Event.findOne(args.event)
+                .then(event => {
+                    return user.events.id(event._id)
+                })
+            })
         },
         getUsers: (obj, args, context, info) => {
-            return User.find(args.input)
+            console.log('getting users', args.user)
+            return User.find(args.user)
         },
-        getEvents: (obj, args, context, info) => {
-            return Event.find(args.input)
+        getUsersEvents: (obj, args, context, info) => {
+            console.log('getting all events for user', args.user)
+            return User.findOne(args.user)
+            // return all events
+            .then(user => user.events)
         },
         getAllUsers: (obj, args, context, info) => {
+            console.log('getting all users')
             return User.find()
         },
         getAllEvents: (obj, args, context, info) => {
+            console.log('getting all events')
             return Event.find()
         },
     },
     Mutation: {
         addUser: (obj, args, context, info) => {
-            console.log(args.input)
+            console.log('adding new user', args.user)
             return User.create(args.input)
         },
         updateUser: (obj, args, context, info) => {
-            return User.findByIdAndUpdate(args.user.id, args.input)
+            console.log('updating user', args.user)
+            // must guarantee updating user id exists
+            // or send original user info to find
+            return User.findOneAndUpdate({ _id: args.user._id }, args.user)
         },
         removeUser: (obj, args, context, info) => {
-            return User.remove(args.input)
+            console.log('removing user', args.user)
+            return User.remove(args.user)
         },
         addEvent: (obj, args, context, info) => {
-            return Event.create(args.input)
+            console.log('adding new event to user', args.event, args.user)
+            return User.findOne(args.user)
+            .then(user => {
+                const newEvent = user.events.create(args.event)
+                user.events.push(newEvent)
+                return user.save()
+                .then(() => User.findById(user._id)
+                .then(() => user.events.id(newEvent._id)))
+            })
+            
         },
         updateEvent: (obj, args, context, info) => {
-            return Event.findByIdAndUpdate(args.input.id, args.input)
+            return Event.findOneAndUpdate({ _id: args.input._id }, args.input)
         },
         removeEvent: (obj, args, context, info) => {
             return Event.remove(args.input)
@@ -72,10 +100,7 @@ const resolvers = {
                 return Event.findById(args.eventId)
                 .then(event => {
                     console.log('found event to add to user', event)
-                    user.events = [
-                        ...user.events,
-                        event
-                    ]
+                    user.events.push(event)
                     return user.save()
                     .then(() => User.findById(user.id))
                 })

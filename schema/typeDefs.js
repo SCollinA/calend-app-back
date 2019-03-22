@@ -3,45 +3,45 @@ const { gql } = require('apollo-server-express')
 const typeDefs = gql`
     scalar Date
     input UserInput {
-        id: ID
+        _id: ID
         name: String
         events: [EventInput]
     }
     input EventInput {
-        id: ID
+        _id: ID
         name: String
         timeStart: Date
         timeEnd: Date
         notes: String
     }
     type Query {
-        getUser(input: UserInput): User
-        getEvent(input: EventInput): Event
-        getUsers(input: UserInput): [User]
-        getEvents(input: EventInput): [Event]
+        getUser(user: UserInput): User
+        getUserEvent(user: UserInput, event: EventInput): Event
+        getUsers(user: UserInput): [User]
+        getUsersEvents(user: UserInput): [Event]
         getAllUsers: [User]
         getAllEvents: [Event]
     }
     type Mutation {
-        addUser(input: UserInput): User
-        updateUser(input: UserInput): User
-        removeUser(id: ID): User
-        addEvent(input: EventInput): Event
-        updateEvent(input: EventInput): Event
-        removeEvent(id: ID): Event
-        addEventToUser(eventId: ID, userId: ID): User
-        removeEventFromUser(eventId: ID, userId: ID): User
+        addUser(user: UserInput): User
+        updateUser(user: UserInput): User
+        removeUser(user: ID): User
+        addEvent(user: UserInput, event: EventInput): Event
+        updateEvent(event: EventInput): Event
+        removeEvent(event: ID): Event
+        addEventToUser(event: EventInput, user: UserInput): User
+        removeEventFromUser(event: EventInput, user: UserInput): User
     }
     type AuthPayload {
         token: String
     }
     type User {
-        id: ID!
+        _id: ID!
         name: String
         events: [Event]
     }
     type Event {
-        id: ID!
+        _id: ID!
         name: String
         timeStart: Date
         timeEnd: Date
