@@ -137,7 +137,7 @@ const resolvers = {
             })
         },
         login: (obj, args, context, info) => {
-            console.log('logging in user', args.user)
+            console.log('logging in user', args.user.name)
             return User.findOne({ name: args.user.name })
             .then(user => {
                 if (!user) { throw new Error('bad username or password') }
