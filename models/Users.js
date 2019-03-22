@@ -1,12 +1,11 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
-const { EventSchema } = require('./Events')
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const UserSchema = new Schema({
         name: String,
         pwhash: String,
-        events: [EventSchema]
+        eventIds: [ObjectId]
     })
 
 const User = mongoose.model('User', UserSchema)

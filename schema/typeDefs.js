@@ -5,7 +5,7 @@ const typeDefs = gql`
     input UserInput {
         _id: ID
         name: String
-        events: [EventInput]
+        eventIds: [ID]
     }
     input EventInput {
         _id: ID
@@ -13,24 +13,25 @@ const typeDefs = gql`
         timeStart: Date
         timeEnd: Date
         notes: String
+        userIds: [ID]
     }
     type Query {
         getUser(user: UserInput): User
-        getUserEvent(user: UserInput, event: EventInput): Event
+        getEvent(event: EventInput): Event
         getUsers(user: UserInput): [User]
-        getUsersEvents(user: UserInput): [Event]
+        getEvents(event: EventInput): [Event]
         getAllUsers: [User]
         getAllEvents: [Event]
     }
     type Mutation {
         addUser(user: UserInput): User
         updateUser(user: UserInput): User
-        removeUser(user: ID): User
-        addEvent(user: UserInput, event: EventInput): Event
+        removeUser(user: UserInput): User
+        addEvent(event: EventInput): Event
         updateEvent(event: EventInput): Event
-        removeEvent(event: ID): Event
-        addEventToUser(event: EventInput, user: UserInput): User
-        removeEventFromUser(event: EventInput, user: UserInput): User
+        removeEvent(event: EventInput): Event
+        addUserToEvent(user: UserInput, event: EventInput): Event
+        removeUserFromEvent(user: UserInput, event: EventInput): Event
     }
     type AuthPayload {
         token: String
@@ -38,7 +39,7 @@ const typeDefs = gql`
     type User {
         _id: ID!
         name: String
-        events: [Event]
+        eventIds: [ID]
     }
     type Event {
         _id: ID!
@@ -46,6 +47,7 @@ const typeDefs = gql`
         timeStart: Date
         timeEnd: Date
         notes: String
+        userIds: [ID]
     }
 `
 
