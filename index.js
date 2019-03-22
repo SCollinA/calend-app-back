@@ -40,7 +40,10 @@ const apollo = new ApolloServer({
             return connection.context
         } else {
             const authorization = req.headers.authorization || ''
-            return { authorization }
+            return { 
+                authorization, 
+                session 
+            }
     }},
     cors: {
         origin: [

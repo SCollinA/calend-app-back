@@ -75,10 +75,15 @@ const resolvers = {
         updateUser: (obj, args, context, info) => {
             checkLoggedIn(context)
             console.log('updating user', args.oldUser, args.newUser)
-            // must guarantee updating user id exists
-            // or send original user info to find
-            return User.findOneAndUpdate(args.oldUser, args.newUser)
-            .then(() => User.findOne(args.newUser))
+            return User.findOne(args.oldUser)
+            .then(oldUser => {
+                const pwMatch = bcrypt.compareSync(args.currentPassword, oldUser.pwhash)
+                if (!pwMatch) { throw new Error('bad password') }
+                // must guarantee updating user id exists
+                // or send original user info to find
+                return User.findOneAndUpdate(args.oldUser, args.newUser)
+                .then(() => User.findOne(args.newUser))
+            })
         },
         removeUser: (obj, args, context, info) => {
             checkLoggedIn(context)
