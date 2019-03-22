@@ -137,9 +137,9 @@ const resolvers = {
         },
         login: (obj, args, context, info) => {
             console.log('logging in user', args.user)
-            return User.findOne(args.user)
+            return User.findOne({ name: args.user.name })
             .then(user => {
-                const pwMatch = bcrypt.compareSync(args.password, user.pwhash)
+                const pwMatch = bcrypt.compareSync(args.user.pwhash, user.pwhash)
                 if (!pwMatch) { throw new Error('bad password') }
                 console.log('good password')
                 const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
