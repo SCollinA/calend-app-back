@@ -5,6 +5,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const UserSchema = new Schema({
     name: {
         type: String,
+        required: true,
         index: true,
         unique: true,
         lowercase: true
