@@ -104,8 +104,8 @@ const resolvers = {
             .then(user => {
                 return Event.findOne(args.event)
                 .then(event => {
-                    user.eventIds = user.eventIds.filter(eventId => eventId.equals(event._id))
-                    event.userIds = event.userIds.filter(userId => userId.equals(user._id))
+                    user.eventIds = user.eventIds.filter(eventId => !eventId.equals(event._id))
+                    event.userIds = event.userIds.filter(userId => !userId.equals(user._id))
                     return user.save()
                     .then(() => event.save())
                     .then(() => User.findById(user.id))
