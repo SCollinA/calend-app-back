@@ -15,7 +15,8 @@ mongoose.connect(
     'mongodb://localhost:27017/calend-app', 
     { 
         useNewUrlParser: true,
-        useFindAndModify: false
+        useFindAndModify: false,
+        useCreateIndex: true
     }
 )
 const store = new MongoDBStore({

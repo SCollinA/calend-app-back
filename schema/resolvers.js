@@ -1,11 +1,15 @@
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language')
-// const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 // const pubsub = new PubSub()
+const { APP_SECRET } = process.env
+const { checkLoggedIn } = require('../utils')
 
 const { User } = require('../models/Users')
 const { Event } = require('../models/Events')
+
 
 const resolvers = {
     Date: new GraphQLScalarType({
@@ -53,9 +57,23 @@ const resolvers = {
     Mutation: {
         addUser: (obj, args, context, info) => {
             console.log('adding new user', args.user)
-            return User.create(args.user)
+            const saltRounds = 10
+            const salt = bcrypt.genSaltSync(saltRounds)
+            const pwhash = bcrypt.hashSync(args.user.pwhash, salt)
+            return User.create({ ...args.user, pwhash })
+            .then(user => {
+                const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
+                    expiresIn: 60 * 60 * 24 // expires in one day
+                })
+                return { 
+                    token,
+                    user
+                }
+            })
+            .catch(err => new Error('username taken'))
         },
         updateUser: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('updating user', args.oldUser, args.newUser)
             // must guarantee updating user id exists
             // or send original user info to find
@@ -63,14 +81,17 @@ const resolvers = {
             .then(() => User.findOne(args.newUser))
         },
         removeUser: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('removing user', args.user)
             return User.remove(args.user)
         },
         addEvent: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('adding new event', args.event)
             return Event.create(args.event)
         },
         updateEvent: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('updating event', args.oldEvent, args.newEvent)
             // must guarantee updating user id exists
             // or send original user info to find
@@ -78,10 +99,12 @@ const resolvers = {
             .then(() => Event.findOne(args.newEvent))
         },
         removeEvent: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('removing event', args.event)
             return Event.remove(args.event)
         },
         addUserToEvent: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('adding user to event', args.user, args.event)
             return User.findOne(args.user)
             .then(user => {
@@ -90,7 +113,7 @@ const resolvers = {
                     if (!(user.eventIds.find(eventId => eventId.equals(event._id)) ||
                     event.userIds.find(userId => userId.equals(user._id)))) {
                         user.eventIds.push(event._id)
-                        event.userIds.push(user._id)
+                        event.guestIds.push(user._id)
                         return user.save()
                         .then(() => event.save())
                         .then(() => User.findById(user._id))
@@ -99,18 +122,37 @@ const resolvers = {
             })
         },
         removeUserFromEvent: (obj, args, context, info) => {
+            checkLoggedIn(context)
             console.log('removing user from event', args.user, args.event)
             return User.findOne(args.user)
             .then(user => {
                 return Event.findOne(args.event)
                 .then(event => {
                     user.eventIds = user.eventIds.filter(eventId => !eventId.equals(event._id))
-                    event.userIds = event.userIds.filter(userId => !userId.equals(user._id))
+                    event.guestIds = event.guestIds.filter(userId => !userId.equals(user._id))
                     return user.save()
                     .then(() => event.save())
                     .then(() => User.findById(user.id))
                 })
             })
+        },
+        login: (obj, args, context, info) => {
+            console.log('logging in user', args.user)
+            return User.findOne({ name: args.user.name })
+            .then(user => {
+                if (!user) { throw new Error('bad username or password') }
+                const pwMatch = bcrypt.compareSync(args.user.pwhash, user.pwhash)
+                if (!pwMatch) { throw new Error('bad username or password') }
+                console.log('good password')
+                const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
+                    expiresIn: 60 * 60 * 24 // expires in one day
+                })
+                return { 
+                    token,
+                    user
+                }
+            })
+            
         }
     },
 }

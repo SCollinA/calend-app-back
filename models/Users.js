@@ -3,7 +3,12 @@ const Schema = mongoose.Schema
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const UserSchema = new Schema({
-    name: String,
+    name: {
+        type: String,
+        index: true,
+        unique: true,
+        lowercase: true
+    },
     pwhash: String,
     eventIds: [ObjectId]
 })
