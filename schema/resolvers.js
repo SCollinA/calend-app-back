@@ -75,8 +75,15 @@ const resolvers = {
         updateUser: (obj, args, context, info) => {
             checkLoggedIn(context)
             console.log('updating user', args.oldUser, args.newUser)
-            return User.findOneAndUpdate(args.oldUser, args.newUser)
-            .then(() => User.findOne(args.newUser))
+            const saltRounds = 10
+            const salt = bcrypt.genSaltSync(saltRounds)
+            const pwhash = args.newUser.pwhash && bcrypt.hashSync(args.newUser.pwhash, salt)
+            const newUser = pwhash ? {
+                ...args.newUser,
+                pwhash,
+            } : args.newUser
+            return User.findOneAndUpdate(args.oldUser, newUser)
+            .then(() => User.findOne({ _id: args.oldUser._id }))
         },
         removeUser: (obj, args, context, info) => {
             checkLoggedIn(context)
@@ -138,7 +145,7 @@ const resolvers = {
             console.log('logging in user', args.user.name)
             return User.findOne({ name: args.user.name })
             .then(user => {
-                if (!user) { throw new Error('bad username or password') }
+                console.log('found user', user)
                 const pwMatch = bcrypt.compareSync(args.user.pwhash, user.pwhash)
                 if (!pwMatch) { throw new Error('bad username or password') }
                 console.log('good password')
