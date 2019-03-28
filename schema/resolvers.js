@@ -22,8 +22,11 @@ const resolvers = {
             return value.getTime(); // value sent to the client
         },
         parseLiteral(ast) {
+            console.log('hello', ast)
             if (ast.kind === Kind.INT) {
-                return new Date(ast.value) // ast value is always in string format
+                return new Date(parseInt(ast.value)) // ast value is always in string format
+            } else if (ast.kind === Kind.STRING) {
+                return new Date(ast.value)
             }
             return null;
         },
@@ -43,7 +46,14 @@ const resolvers = {
         },
         getEvents: (obj, args, context, info) => {
             console.log('getting all events for user', args.event)
-            return Event.find(args.event)
+            const conditions = args.event
+            if (conditions.guestIds) {
+                conditions.guestIds = { $all: conditions.guestIds }
+            }
+            if (conditions.timeStart) {
+                conditions.timeStart = { $gte: new Date(args.event.timeStart) }
+            }
+            return Event.find(conditions)
         },
         getAllUsers: (obj, args, context, info) => {
             console.log('getting all users')
@@ -115,13 +125,15 @@ const resolvers = {
             .then(user => {
                 return Event.findOne(args.event)
                 .then(event => {
-                    if (!(user.eventIds.find(eventId => eventId.equals(event._id)) ||
-                    event.userIds.find(userId => userId.equals(user._id)))) {
+                    // if user has not already been added to event
+                    if (!(user.eventIds && user.eventIds.find(eventId => eventId.equals(event._id))) ||
+                    (event.guestIds && event.guestIds.find(userId => userId.equals(user._id))) ||
+                    (event.hostId === user._id)) {
                         user.eventIds.push(event._id)
                         event.guestIds.push(user._id)
                         return user.save()
                         .then(() => event.save())
-                        .then(() => User.findById(user._id))
+                        .then(() => Event.findById(event._id))
                     }
                 })
             })
@@ -137,7 +149,7 @@ const resolvers = {
                     event.guestIds = event.guestIds.filter(userId => !userId.equals(user._id))
                     return user.save()
                     .then(() => event.save())
-                    .then(() => User.findById(user.id))
+                    .then(() => Event.findById(event._id))
                 })
             })
         },
@@ -173,7 +185,7 @@ const resolvers = {
                 user.token = token
                 console.log('assigned new token to user', user)
                 return user.save()
-                .then(() => User.findById(user.id))
+                .then(() => User.findById(user._id))
                 .then(user => {
                     console.log('found upated auto-logged in user', user)
                     return { 
