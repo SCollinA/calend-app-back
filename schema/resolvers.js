@@ -60,11 +60,11 @@ const resolvers = {
             const saltRounds = 10
             const salt = bcrypt.genSaltSync(saltRounds)
             const pwhash = bcrypt.hashSync(args.user.pwhash, salt)
-            return User.create({ ...args.user, pwhash })
+            const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
+                expiresIn: 60 * 60 * 24 // expires in one day
+            })
+            return User.create({ ...args.user, pwhash, token })
             .then(user => {
-                const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
-                    expiresIn: 60 * 60 * 24 // expires in one day
-                })
                 return { 
                     token,
                     user
@@ -152,10 +152,13 @@ const resolvers = {
                 const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
                     expiresIn: 60 * 60 * 24 // expires in one day
                 })
-                return { 
+                user.token = token
+                return user.save()
+                .then(() => User.findById(user.id))
+                .then(user => ({ 
                     token,
                     user
-                }
+                }))
             })
             
         },
