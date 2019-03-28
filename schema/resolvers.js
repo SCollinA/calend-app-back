@@ -163,23 +163,24 @@ const resolvers = {
             .catch(() => console.log('could not find user for login'))
         },
         autoLogin: (obj, args, context, info) => {
-            console.log('auto-logging in user')
-            return User.find({ token: args.token })
+            console.log('auto-logging in user', args.token)
+            return User.findOne({ token: args.token })
             .then(user => {
                 console.log('found user', user)
-                const pwMatch = bcrypt.compareSync(args.user.pwhash, user.pwhash)
-                if (!pwMatch) { throw new Error('bad username or password') }
-                console.log('good password')
                 const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
                     expiresIn: 60 * 60 * 24 // expires in one day
                 })
                 user.token = token
+                console.log('assigned new token to user', user)
                 return user.save()
                 .then(() => User.findById(user.id))
-                .then(user => ({ 
-                    token,
-                    user
-                }))
+                .then(user => {
+                    console.log('found upated auto-logged in user', user)
+                    return { 
+                        token,
+                        user
+                    }
+                })
             })
             .catch(() => console.log('could not find user for auto-login'))
         },
