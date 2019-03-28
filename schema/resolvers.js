@@ -59,6 +59,7 @@ const resolvers = {
                     $lt: new Date(searchDate.getTime() + 1 * 24 * 60 * 60 * 1000)
                 }
             }
+            console.log(conditions)
             return Event.find(conditions)
         },
         getAllUsers: (obj, args, context, info) => {
@@ -110,6 +111,12 @@ const resolvers = {
             checkLoggedIn(context)
             console.log('adding new event', args.event)
             return Event.create(args.event)
+            .then(event => User.findById(args.event.hostId)
+            .then(user => {
+                user.eventIds.push(event._id)
+                return user.save()
+                .then(() => event)
+            }))
         },
         updateEvent: (obj, args, context, info) => {
             checkLoggedIn(context)
@@ -178,7 +185,6 @@ const resolvers = {
                     user
                 }))
             })
-            .catch(() => console.log('could not find user for login'))
         },
         autoLogin: (obj, args, context, info) => {
             console.log('auto-logging in user', args.token)
