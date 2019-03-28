@@ -22,7 +22,6 @@ const resolvers = {
             return value.getTime(); // value sent to the client
         },
         parseLiteral(ast) {
-            console.log('hello', ast)
             if (ast.kind === Kind.INT) {
                 return new Date(parseInt(ast.value)) // ast value is always in string format
             } else if (ast.kind === Kind.STRING) {
@@ -53,13 +52,12 @@ const resolvers = {
                 }
             }
             if (conditions.timeStart) {
-                const searchDate = new Date(args.event.timeStart)
+                const searchDate = args.event.timeStart
                 conditions.timeStart = { 
                     $gte: searchDate, 
                     $lt: new Date(searchDate.getTime() + 1 * 24 * 60 * 60 * 1000)
                 }
             }
-            console.log(conditions)
             return Event.find(conditions)
         },
         getAllUsers: (obj, args, context, info) => {
