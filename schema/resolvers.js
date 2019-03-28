@@ -60,11 +60,11 @@ const resolvers = {
             const saltRounds = 10
             const salt = bcrypt.genSaltSync(saltRounds)
             const pwhash = bcrypt.hashSync(args.user.pwhash, salt)
-            return User.create({ ...args.user, pwhash })
+            const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
+                expiresIn: 60 * 60 * 24 // expires in one day
+            })
+            return User.create({ ...args.user, pwhash, token })
             .then(user => {
-                const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
-                    expiresIn: 60 * 60 * 24 // expires in one day
-                })
                 return { 
                     token,
                     user
@@ -152,13 +152,48 @@ const resolvers = {
                 const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
                     expiresIn: 60 * 60 * 24 // expires in one day
                 })
-                return { 
+                user.token = token
+                return user.save()
+                .then(() => User.findById(user.id))
+                .then(user => ({ 
                     token,
                     user
-                }
+                }))
             })
-            
-        }
+            .catch(() => console.log('could not find user for login'))
+        },
+        autoLogin: (obj, args, context, info) => {
+            console.log('auto-logging in user', args.token)
+            return User.findOne({ token: args.token })
+            .then(user => {
+                console.log('found user', user)
+                const token = jwt.sign({ isLoggedIn: true }, APP_SECRET, {
+                    expiresIn: 60 * 60 * 24 // expires in one day
+                })
+                user.token = token
+                console.log('assigned new token to user', user)
+                return user.save()
+                .then(() => User.findById(user.id))
+                .then(user => {
+                    console.log('found upated auto-logged in user', user)
+                    return { 
+                        token,
+                        user
+                    }
+                })
+            })
+            .catch(() => console.log('could not find user for auto-login'))
+        },
+        // logout mutation removes jwt
+        logout: (obj, args, context, info) => {
+            console.log('logging out user', args.user)
+            User.findOne(args.user)
+            .then(user => {
+                user.token = null
+                return user.save()
+                .then(() => null)
+            })
+        },
     },
 }
 

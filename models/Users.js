@@ -11,6 +11,7 @@ const UserSchema = new Schema({
         lowercase: true
     },
     pwhash: String,
+    token: String,
     eventIds: [ObjectId]
 })
 
