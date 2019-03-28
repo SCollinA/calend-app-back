@@ -14,7 +14,8 @@ const typeDefs = gql`
         timeStart: Date
         timeEnd: Date
         notes: String
-        userIds: [ID]
+        hostId: ID
+        guestIds: [ID]
     }
     type Query {
         getUser(user: UserInput): User
