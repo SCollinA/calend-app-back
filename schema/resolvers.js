@@ -158,7 +158,16 @@ const resolvers = {
                 }
             })
             
-        }
+        },
+        autoLogin: (obj, args, context, info) => {
+            console.log('auto-logging in user')
+            return null
+        },
+        // logout mutation removes jwt
+        logout: (obj, args, context, info) => {
+            console.log('logging out user')
+            return null
+        },
     },
 }
 

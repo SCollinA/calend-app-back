@@ -34,6 +34,7 @@ const typeDefs = gql`
         addUserToEvent(user: UserInput, event: EventInput): Event
         removeUserFromEvent(user: UserInput, event: EventInput): Event
         login(user: UserInput): AuthPayload
+        autoLogin(token: String): AuthPayload
         logout: User
     }
     type AuthPayload {
