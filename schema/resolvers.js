@@ -186,8 +186,13 @@ const resolvers = {
         },
         // logout mutation removes jwt
         logout: (obj, args, context, info) => {
-            console.log('logging out user')
-            return null
+            console.log('logging out user', args.user)
+            User.findOne(args.user)
+            .then(user => {
+                user.token = null
+                return user.save()
+                .then(() => null)
+            })
         },
     },
 }
