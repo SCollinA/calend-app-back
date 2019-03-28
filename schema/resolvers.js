@@ -48,10 +48,16 @@ const resolvers = {
             console.log('getting all events for user', args.event)
             const conditions = args.event
             if (conditions.guestIds) {
-                conditions.guestIds = { $all: conditions.guestIds }
+                conditions.guestIds = { 
+                    $all: conditions.guestIds 
+                }
             }
             if (conditions.timeStart) {
-                conditions.timeStart = { $gte: new Date(args.event.timeStart) }
+                const searchDate = new Date(args.event.timeStart)
+                conditions.timeStart = { 
+                    $gte: searchDate, 
+                    $lt: new Date(searchDate.getTime() + 1 * 24 * 60 * 60 * 1000)
+                }
             }
             return Event.find(conditions)
         },
