@@ -3,14 +3,12 @@ const { gql } = require('apollo-server-express')
 const typeDefs = gql`
     scalar Date
     input UserInput {
-        __typename: String
         _id: ID
         name: String
         pwhash: String
         eventIds: [ID]
     }
     input EventInput {
-        __typename: String
         _id: ID
         name: String
         timeStart: Date
